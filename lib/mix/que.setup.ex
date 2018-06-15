@@ -5,6 +5,9 @@ defmodule Mix.Tasks.PersQueue.Setup do
   Creates an Mnesia DB on disk for PersQueue.
   """
 
+  @doc """
+  Setups persistence back.
+  """
   def run(_) do
     PersQueue.Persistence.setup
   end

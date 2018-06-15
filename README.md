@@ -40,8 +40,8 @@ PersQueue.add("consumer1", "a")  # => :ok
 PersQueue.add("consumer1", "b")  # => :ok
 
 # Get message:
-PersQueue.get("consumer1")       # => %PersQueue.Message{connection: "consumer1", content: "a", id: 1}
-PersQueue.get("consumer1")       # => %PersQueue.Message{connection: "consumer1", content: "b", id: 2}
+PersQueue.get("consumer1")       # => %PersQueue.Message{consumer: "consumer1", content: "a", id: 1}
+PersQueue.get("consumer1")       # => %PersQueue.Message{consumer: "consumer1", content: "b", id: 2}
 
 # Ack message by message id:
 PersQueue.ack("consumer1", 1)    # => :ok

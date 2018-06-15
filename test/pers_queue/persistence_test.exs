@@ -19,7 +19,7 @@ defmodule PersQueue.Test.Persistence do
     assert Persistence.enqueued == messages
   end
 
-  test "finds enqueued messages for a connection" do
+  test "finds enqueued messages for a consumer" do
     assert Persistence.enqueued == []
 
     [a1, b1, c1, a2, b2, c2] = Helpers.Persistence.create_sample_messages

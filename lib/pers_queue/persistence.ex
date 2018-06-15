@@ -8,6 +8,19 @@ defmodule PersQueue.Persistence do
   @db Module.concat(__MODULE__, DB)
   @store Module.concat(@db, Messages)
 
+  @doc """
+  Creates the Mnesia Database for `PersQueue` on disk
+
+  This creates the Schema, Database and Tables for
+  PersQueue Messages on disk for the specified erlang nodes so
+  Messages are persisted across application restarts.
+  Calling this momentarily stops the `:mnesia`
+  application so you should make sure it's not being
+  used when you do.
+
+  The database is creates for the current node.
+  """
+  @spec setup(nodes :: list(node)) :: :ok
   def setup(nodes \\ [node()]) do
     Amnesia.stop
     Amnesia.Schema.create(nodes)
@@ -18,11 +31,14 @@ defmodule PersQueue.Persistence do
   end
 
   defdatabase DB do
+    @moduledoc false
     deftable Messages, [{:id, autoincrement}, :consumer, :content], type: :ordered_set do
       @type t :: %Messages{id: non_neg_integer, consumer: String.t, content: String.t}
 
       @store __MODULE__
+      @moduledoc false
 
+      @doc "Finds all enqueued messages"
       def enqueued_messages do
         Amnesia.transaction do
           keys()
@@ -31,12 +47,14 @@ defmodule PersQueue.Persistence do
         end
       end
 
+      @doc "Find all enqueued messages for a consumer"
       def enqueued_messages(name) do
         Amnesia.transaction do
           parse_selection(where(consumer == name))
         end
       end
 
+      @doc "Inserts a new message in to DB"
       def create_message(message) do
         Amnesia.transaction do
           message
@@ -46,6 +64,7 @@ defmodule PersQueue.Persistence do
         end
       end
 
+      @doc "Deletes a message from the DB"
       def delete_message(message_id) do
         Amnesia.transaction do
           delete(message_id)
@@ -69,6 +88,7 @@ defmodule PersQueue.Persistence do
     end
   end
 
+  @doc false
   def start do
     @db.create
   end
