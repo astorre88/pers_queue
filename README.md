@@ -1,4 +1,5 @@
 # PersQueue
+[![Build Status](https://api.travis-ci.org/astorre88/pers_queue.svg?branch=master)](https://travis-ci.org/astorre88/pers_queue)
 
 The library implements persistent queue for Elixir applications.
 
