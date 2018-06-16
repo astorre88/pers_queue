@@ -6,3 +6,6 @@ otp_release: '19.0'
 notifications:
   recipients:
     - bigbenperl@gmail.com
+env:
+  - MIX_ENV=test
+script: mix coveralls.travis
