@@ -9,9 +9,9 @@ defmodule PersQueue.Supervisor do
   @doc """
   Starts the supervision tree for `PersQueue`
   """
-  @spec start_link() :: Supervisor.on_start
+  @spec start_link() :: Supervisor.on_start()
   def start_link do
-    PersQueue.Persistence.start
+    PersQueue.Persistence.start()
     Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 

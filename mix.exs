@@ -20,7 +20,7 @@ defmodule PersQueue.MixProject do
     The library implements persistent queue for Elixir applications.
     """
   end
-  
+
   defp package do
     [
       files: ["lib", "mix.exs", "README.md"],

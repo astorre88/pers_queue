@@ -25,7 +25,11 @@ defmodule PersQueue.Test.NQueue do
     test "returns queue with enqueued list", context do
       q = NQueue.new("consumer", [context[:message1], context[:message2], context[:message3]])
 
-      assert :queue.to_list(q.queued) == [context[:message1], context[:message2], context[:message3]]
+      assert :queue.to_list(q.queued) == [
+               context[:message1],
+               context[:message2],
+               context[:message3]
+             ]
     end
 
     test "returns queue with updated enqueued list", context do
@@ -33,16 +37,21 @@ defmodule PersQueue.Test.NQueue do
         "consumer"
         |> NQueue.new([context[:message1], context[:message2], context[:message3]])
         |> NQueue.add(context[:message4])
-  
-      assert :queue.to_list(q.queued) == [context[:message1], context[:message2], context[:message3], context[:message4]]
+
+      assert :queue.to_list(q.queued) == [
+               context[:message1],
+               context[:message2],
+               context[:message3],
+               context[:message4]
+             ]
     end
 
     test "pops the message from the queue", context do
       {q, message} =
         "consumer"
         |> NQueue.new([context[:message1], context[:message2], context[:message3]])
-        |> NQueue.get
-  
+        |> NQueue.get()
+
       assert message == context[:message1]
       assert :queue.to_list(q.queued) == [context[:message2], context[:message3]]
     end
@@ -51,8 +60,8 @@ defmodule PersQueue.Test.NQueue do
       {_q, message} =
         "consumer"
         |> NQueue.new([])
-        |> NQueue.get
-  
+        |> NQueue.get()
+
       assert message == nil
     end
 
@@ -60,7 +69,7 @@ defmodule PersQueue.Test.NQueue do
       {q, message} =
         "consumer"
         |> NQueue.new([context[:message1], context[:message2], context[:message3]])
-        |> NQueue.get
+        |> NQueue.get()
 
       assert message == context[:message1]
       assert :queue.to_list(q.queued) == [context[:message2], context[:message3]]
@@ -71,7 +80,7 @@ defmodule PersQueue.Test.NQueue do
       {q, message} =
         "consumer"
         |> NQueue.new([context[:message1], context[:message2], context[:message3]])
-        |> NQueue.get
+        |> NQueue.get()
 
       updated_queue = NQueue.ack(q, message.id)
 
@@ -84,13 +93,19 @@ defmodule PersQueue.Test.NQueue do
       {q, message} =
         "consumer"
         |> NQueue.new([context[:message1], context[:message2], context[:message3]])
-        |> NQueue.get
+        |> NQueue.get()
 
       {updated_queue, rejected_message} = NQueue.reject(q, message.id)
 
       assert message == context[:message1]
       assert rejected_message == message
-      assert :queue.to_list(updated_queue.queued) == [context[:message2], context[:message3], context[:message1]]
+
+      assert :queue.to_list(updated_queue.queued) == [
+               context[:message2],
+               context[:message3],
+               context[:message1]
+             ]
+
       assert updated_queue.running == []
     end
   end

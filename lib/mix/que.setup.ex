@@ -9,6 +9,6 @@ defmodule Mix.Tasks.PersQueue.Setup do
   Setups persistence back.
   """
   def run(_) do
-    PersQueue.Persistence.setup
+    PersQueue.Persistence.setup()
   end
 end

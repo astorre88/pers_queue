@@ -22,9 +22,9 @@ defmodule PersQueue.Persistence do
   """
   @spec setup(nodes :: list(node)) :: :ok
   def setup(nodes \\ [node()]) do
-    Amnesia.stop
+    Amnesia.stop()
     Amnesia.Schema.create(nodes)
-    Amnesia.start
+    Amnesia.start()
 
     @db.create!(disk: nodes)
     @db.wait(15_000)
@@ -33,7 +33,7 @@ defmodule PersQueue.Persistence do
   defdatabase DB do
     @moduledoc false
     deftable Messages, [{:id, autoincrement}, :consumer, :content], type: :ordered_set do
-      @type t :: %Messages{id: non_neg_integer, consumer: String.t, content: String.t}
+      @type t :: %Messages{id: non_neg_integer, consumer: String.t(), content: String.t()}
 
       @store __MODULE__
       @moduledoc false
@@ -76,13 +76,14 @@ defmodule PersQueue.Persistence do
       end
 
       defp to_que_message(nil), do: nil
+
       defp to_que_message(%@store{} = message) do
         struct(PersQueue.Message, Map.from_struct(message))
       end
 
       defp parse_selection(selection) do
         selection
-        |> Amnesia.Selection.values
+        |> Amnesia.Selection.values()
         |> Enum.map(&to_que_message/1)
       end
     end
@@ -96,13 +97,13 @@ defmodule PersQueue.Persistence do
   @doc """
   Returns enqueued `PersQueue.Message`s from the database.
   """
-  @spec enqueued :: list(PersQueue.Message.t)
+  @spec enqueued :: list(PersQueue.Message.t())
   defdelegate enqueued, to: @store, as: :enqueued_messages
 
   @doc """
   Returns all enqueued `PersQueue.Message`s for the given consumer.
   """
-  @spec enqueued(consumer :: String.t) :: list(PersQueue.Message.t)
+  @spec enqueued(consumer :: String.t()) :: list(PersQueue.Message.t())
   defdelegate enqueued(consumer), to: @store, as: :enqueued_messages
 
   @doc """
@@ -110,7 +111,7 @@ defmodule PersQueue.Persistence do
 
   Returns the same Message struct with the `id` value set
   """
-  @spec insert(message :: String.t) :: PersQueue.Message.t
+  @spec insert(message :: String.t()) :: PersQueue.Message.t()
   defdelegate insert(message), to: @store, as: :create_message
 
   @doc """

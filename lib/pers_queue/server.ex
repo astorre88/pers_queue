@@ -10,7 +10,7 @@ defmodule PersQueue.Server do
   @doc """
   Starts the message Server
   """
-  @spec start_link(consumer :: String.t) :: GenServer.on_start
+  @spec start_link(consumer :: String.t()) :: GenServer.on_start()
   def start_link(consumer) do
     GenServer.start_link(__MODULE__, {:ok, consumer}, name: from(consumer))
   end
@@ -18,7 +18,7 @@ defmodule PersQueue.Server do
   @doc """
   Creates a new message with the passed content.
   """
-  @spec add(consumer :: String.t, message_content :: String.t) :: :ok
+  @spec add(consumer :: String.t(), message_content :: String.t()) :: :ok
   def add(consumer, message_content) do
     GenServer.call(from(consumer), {:add, consumer, message_content})
   end
@@ -26,7 +26,7 @@ defmodule PersQueue.Server do
   @doc """
   Gets the message from the head of the queue.
   """
-  @spec get(consumer :: String.t) :: :ok
+  @spec get(consumer :: String.t()) :: :ok
   def get(consumer) do
     GenServer.call(from(consumer), :get)
   end
@@ -34,7 +34,7 @@ defmodule PersQueue.Server do
   @doc """
   Acks the message.
   """
-  @spec ack(consumer :: String.t, message_id :: pos_integer) :: :ok
+  @spec ack(consumer :: String.t(), message_id :: pos_integer) :: :ok
   def ack(consumer, message_id) do
     GenServer.call(from(consumer), {:ack, message_id})
   end
@@ -42,7 +42,7 @@ defmodule PersQueue.Server do
   @doc """
   Rejects the message.
   """
-  @spec reject(consumer :: String.t, message_id :: pos_integer) :: :ok
+  @spec reject(consumer :: String.t(), message_id :: pos_integer) :: :ok
   def reject(consumer, message_id) do
     GenServer.call(from(consumer), {:reject, message_id})
   end
@@ -65,7 +65,7 @@ defmodule PersQueue.Server do
     message =
       consumer
       |> PersQueue.Message.new(message_content)
-      |> PersQueue.Persistence.insert
+      |> PersQueue.Persistence.insert()
 
     updated_queue =
       queue
@@ -81,6 +81,7 @@ defmodule PersQueue.Server do
     case PersQueue.NQueue.get(queue) do
       {queue, nil} ->
         {:reply, nil, queue}
+
       {updated_queue, message} ->
         PersQueue.Persistence.delete(message.id)
         {:reply, message, updated_queue}
@@ -103,6 +104,7 @@ defmodule PersQueue.Server do
     case PersQueue.NQueue.reject(queue, message_id) do
       {^queue, nil} ->
         {:reply, nil, queue}
+
       {updated_queue, rejected} ->
         # Resets message id to save the order of queue
         PersQueue.Persistence.insert(%{rejected | id: nil})
@@ -116,7 +118,7 @@ defmodule PersQueue.Server do
   def exists?(consumer) do
     consumer
     |> from
-    |> GenServer.whereis
+    |> GenServer.whereis()
   end
 
   defp from(consumer) do

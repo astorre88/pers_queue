@@ -12,7 +12,7 @@ defmodule PersQueue.Message do
   @doc """
   Returns a new Message struct with defaults
   """
-  @spec new(consumer :: String.t, content :: String.t) :: PersQueue.Message.t
+  @spec new(consumer :: String.t(), content :: String.t()) :: PersQueue.Message.t()
   def new(consumer, content) do
     %PersQueue.Message{
       consumer: consumer,

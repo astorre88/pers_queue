@@ -60,7 +60,7 @@ defmodule PersQueue do
   Starts the PersQueue application
   """
   def start(_type, _args) do
-    PersQueue.Supervisor.start_link
+    PersQueue.Supervisor.start_link()
   end
 
   @doc """
@@ -76,7 +76,7 @@ defmodule PersQueue do
   PersQueue.add("consumer2", "b") # => :ok
   ```
   """
-  @spec add(consumer :: String.t, message_content :: String.t) :: :ok
+  @spec add(consumer :: String.t(), message_content :: String.t()) :: :ok
   defdelegate add(consumer, message_content), to: PersQueue.ServerSupervisor
 
   @doc """
@@ -90,7 +90,7 @@ defmodule PersQueue do
   PersQueue.get("consumer1") # => %PersQueue.Message{consumer: "consumer1", content: "a", id: 1}
   ```
   """
-  @spec get(consumer :: String.t) :: PersQueue.Message.t
+  @spec get(consumer :: String.t()) :: PersQueue.Message.t()
   defdelegate get(consumer), to: PersQueue.ServerSupervisor
 
   @doc """
@@ -104,7 +104,7 @@ defmodule PersQueue do
   PersQueue.ack("consumer1", 1) # => :ok
   ```
   """
-  @spec ack(consumer :: String.t, message_id :: pos_integer) :: :ok
+  @spec ack(consumer :: String.t(), message_id :: pos_integer) :: :ok
   defdelegate ack(consumer, message_id), to: PersQueue.ServerSupervisor
 
   @doc """
@@ -118,6 +118,6 @@ defmodule PersQueue do
   PersQueue.reject("consumer1", 1) # => :ok
   ```
   """
-  @spec reject(consumer :: String.t, message_id :: pos_integer) :: :ok
+  @spec reject(consumer :: String.t(), message_id :: pos_integer) :: :ok
   defdelegate reject(consumer, message_id), to: PersQueue.ServerSupervisor
 end
